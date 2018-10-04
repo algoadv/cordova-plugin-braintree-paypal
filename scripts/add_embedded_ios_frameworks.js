@@ -11,11 +11,15 @@ module.exports = function (context) {
     }
   }
 
+  console.log('------------------------------ BrainTree PayPal Plugin ------------------------------');
+
   var config = fs.readFileSync("config.xml").toString();
   var bundleIdMatch = config.match(/<widget\s*id="(.*?)".*?/i);
   var bundleId = "";
   if(bundleIdMatch && bundleIdMatch[1]) {
     bundleId = bundleIdMatch[1];
+    console.log("bundleId found: " + bundleId);
+    console.log('------------------------------ BundleId found: ' + bundleId + '  ------------------------------');
   }
 
   const xcodeProjPath = fromDir('platforms/ios','.xcodeproj', false);
@@ -39,7 +43,7 @@ module.exports = function (context) {
     addRunpathSearchBuildProperty(myProj, 'Debug');
     addRunpathSearchBuildProperty(myProj, 'Release');
 
-    const groupName = 'Embed Frameworks ' + context.opts.plugin.id;
+    const groupName = '------------------------------ Embed Frameworks ' + context.opts.plugin.id + " ----------------------------------------";
     const pluginPathInPlatformIosDir = projectName + '/Plugins/' + context.opts.plugin.id;
 
     process.chdir('./platforms/ios');
@@ -122,6 +126,7 @@ module.exports = function (context) {
   }
   
   var urlSchemeValue = bundleId ? bundleId + ".payments" : '${PRODUCT_BUNDLE_IDENTIFIER}.payments';
+  console.log("------------------------------ CFBundleURLSchemes: " + urlSchemeValue + " ------------------------------");
 
   if (!found) {
     infoPlist.CFBundleURLTypes.push( { 'CFBundleTypeRole':'Editor','CFBundleURLSchemes':[urlSchemeValue] } );
