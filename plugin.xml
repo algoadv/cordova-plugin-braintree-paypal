@@ -52,8 +52,8 @@
 	    <hook type="after_plugin_install" src="scripts/add_embedded_ios_frameworks.js" />
 
         <config-file target="config.xml" parent="/*">
-            <feature name="BraintreePlugin">
-                <param name="ios-package" value="BraintreePlugin" />
+            <feature name="BrainTreePayPalPlugin">
+                <param name="ios-package" value="BrainTreePayPalPlugin" />
             </feature>
         </config-file>
 
