@@ -11,6 +11,13 @@ module.exports = function (context) {
     }
   }
 
+  var config = fs.readFileSync("config.xml").toString();
+  var bundleIdMatch = config.match(/<widget\s*id="(.*?)".*?/i);
+  var bundleId = "";
+  if(bundleIdMatch && bundleIdMatch[1]) {
+    bundleId = bundleIdMatch[1];
+  }
+
   const xcodeProjPath = fromDir('platforms/ios','.xcodeproj', false);
   const projectPath = xcodeProjPath + '/project.pbxproj';
   if (!fs.existsSync(projectPath)) {
@@ -98,6 +105,7 @@ module.exports = function (context) {
   var infoPlist = plist.parse(fs.readFileSync(projectName + '-Info.plist', 'utf8'));
 
   var found = false;
+  var itemIndex = 0;
   if (infoPlist.CFBundleURLTypes) {
     infoPlist.CFBundleURLTypes.forEach(function (curValue) {
       if (curValue.CFBundleURLSchemes) {
@@ -105,15 +113,22 @@ module.exports = function (context) {
           if (curValue2 == '${PRODUCT_BUNDLE_IDENTIFIER}.payments') {
             found = true;
           }
+          itemIndex++;
         });
       }
     });
   } else {
     infoPlist.CFBundleURLTypes = new Array();
   }
+  
+  var urlSchemeValue = bundleId ? bundleId + ".payments" : '${PRODUCT_BUNDLE_IDENTIFIER}.payments';
 
   if (!found) {
-    infoPlist.CFBundleURLTypes.push( { 'CFBundleTypeRole':'Editor','CFBundleURLSchemes':['${PRODUCT_BUNDLE_IDENTIFIER}.payments'] } );
+    infoPlist.CFBundleURLTypes.push( { 'CFBundleTypeRole':'Editor','CFBundleURLSchemes':[urlSchemeValue] } );
+    fs.writeFileSync(projectName + '-Info.plist', plist.build(infoPlist), { encoding : 'utf8' });
+  }
+  else if(bundleId) {
+    infoPlist.CFBundleURLTypes[itemIndex] = urlSchemeValue;
     fs.writeFileSync(projectName + '-Info.plist', plist.build(infoPlist), { encoding : 'utf8' });
   }
 
