@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cordova-plugin-braintree-paypal"
+        version="0.0.1">
+
+    <name>Braintree Plugin</name>
+
+    <description>
+        A Cordova plugin for the Braintree mobile payment processing SDK.
+    </description>
+
+    <license>MIT</license>
+
+    <!-- JavaScript Interface -->
+    <js-module src="www/braintree-plugin.js" name="BrainTreePayPalPlugin">
+        <clobbers target="BrainTreePayPalPlugin" />
+    </js-module>
+
+    <!-- Android Configuration -->
+    <platform name="android">
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="BrainTreePayPalPlugin">
+                <param name="android-package" value="com.algoadtech.braintree.BrainTreePayPalPlugin" />
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/BrainTreePayPalPlugin.java" target-dir="src/com/algoadtech/braintree" />
+
+        <framework src="com.braintreepayments.api:braintree:2.12.0" />
+        <framework src="com.braintreepayments.api:drop-in:3.3.0" />
+
+        <config-file target="AndroidManifest.xml" parent="application">
+			<activity android:name="com.braintreepayments.api.BraintreeBrowserSwitchActivity" android:launchMode="singleTask">
+				<intent-filter>
+					<action android:name="android.intent.action.VIEW" />
+					<category android:name="android.intent.category.DEFAULT" />
+					<category android:name="android.intent.category.BROWSABLE" />
+					<data android:scheme="${applicationId}.braintree" />
+				</intent-filter>
+			</activity>
+        </config-file>
+
+    </platform>
+
+    <!-- iOS Configuration -->
+    <platform name="ios">
+	    <!-- Hook to embed iOS frameworks after ios platform added -->
+	    <hook type="after_platform_add" src="scripts/add_embedded_ios_frameworks.js" />
+	    <!-- Hook to embed iOS frameworks after installation -->
+	    <hook type="after_plugin_install" src="scripts/add_embedded_ios_frameworks.js" />
+
+        <config-file target="config.xml" parent="/*">
+            <feature name="BraintreePlugin">
+                <param name="ios-package" value="BraintreePlugin" />
+            </feature>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
+          <array>
+            <string>com.paypal.ppclient.touch.v1</string>
+            <string>com.paypal.ppclient.touch.v2</string>
+          </array>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+            <array>
+                <dict>
+                <key>CFBundleTypeRole</key>
+                <string>Editor</string>
+                <key>CFBundleURLSchemes</key>
+                <array>
+                    <string>${PRODUCT_BUNDLE_IDENTIFIER}.payments</string>
+                </array>
+                </dict>
+            </array>
+        </config-file>
+
+        <header-file src="src/ios/BrainTreePayPalPlugin.h" />
+        <source-file src="src/ios/BrainTreePayPalPlugin.m" />
+
+        <framework src="lib/ios/BraintreeCard.framework" custom="true" embed="true" weak="false" />
+        <framework src="lib/ios/BraintreeCore.framework" custom="true" embed="true" weak="false" />
+        <framework src="lib/ios/BraintreeDataCollector.framework" custom="true" embed="true" weak="false" />
+        <framework src="lib/ios/BraintreePaymentFlow.framework" custom="true" embed="true" weak="false" />
+        <framework src="lib/ios/BraintreePayPal.framework" custom="true" embed="true" weak="false" />
+        <framework src="lib/ios/BraintreeUI.framework" custom="true" embed="true" weak="false" />
+        <framework src="lib/ios/BraintreeUIKit.framework" custom="true" embed="true" weak="false" />
+        <framework src="lib/ios/PayPalDataCollector.framework" custom="true" embed="true" weak="false" />
+        <framework src="lib/ios/PayPalOneTouch.framework" custom="true" embed="true" weak="false" />
+        <framework src="lib/ios/PayPalUtils.framework" custom="true" embed="true" weak="false" />
+    </platform>
+
+</plugin>

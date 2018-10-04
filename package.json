@@ -1,0 +1,34 @@
+{
+  "name": "cordova-plugin-braintree-paypal",
+  "version": "0.0.1",
+  "description": "A Cordova plugin for the Braintree mobile payment processing SDK.",
+  "keywords": [
+    "android",
+    "paypal",
+    "braintree",
+    "payment",
+    "cordova"
+  ],
+  "maintainers": [
+    {
+      "name": "sow",
+      "email": "sow@cpmstars.com"
+    }
+  ],
+  "author": "AlgoAdtech Ltd",
+  "license": "MIT",
+  "cordova": {
+    "id": "cordova-plugin-braintree-paypal",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "directories": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/algoadv/cordova-plugin-braintree-paypal.git"
+  }
+}
