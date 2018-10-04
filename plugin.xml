@@ -61,6 +61,7 @@
           <array>
             <string>com.paypal.ppclient.touch.v1</string>
             <string>com.paypal.ppclient.touch.v2</string>
+            <string>com.venmo.touch.v2</string>
           </array>
         </config-file>
 
