@@ -13,7 +13,10 @@
 
     - (void)init : (CDVInvokedUrlCommand *)command 
     {
+        NSLog(@"[BrainTreePlugin] Starting init");
+
         if ([command.arguments count] != 1) {
+            NSLog(@"[BrainTreePlugin] Token has not been passed");
             CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"A token is required."];
             [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
             return;
@@ -21,16 +24,18 @@
         
         // Obtain the arguments.
         self.token = [command.arguments objectAtIndex:0];
-        
         if (!self.token) {
+            NSLog(@"[BrainTreePlugin] Empty token passed");
             CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"A token is required."];
             [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
             return;
         }
         
+        NSLog(@"[BrainTreePlugin] Initializing with token %@", self.token);
         self.braintreeClient = [[BTAPIClient alloc] initWithAuthorization:self.token];
         
         if (!self.braintreeClient) {
+            NSLog(@"[BrainTreePlugin] Failed initializing the client");
             CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The Braintree client failed to initialize."];
             [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
             return;
@@ -41,6 +46,8 @@
         
         [BTAppSwitch setReturnURLScheme:bundle_id];
         
+        NSLog(@"[BrainTreePlugin] Init Done. Returning callback");
+
         CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
     }
@@ -85,9 +92,11 @@
 
         [payPalDriver requestOneTimePayment:request completion:^(BTPayPalAccountNonce * _Nullable tokenizedPayPalAccount, NSError * _Nullable error) {
             if (tokenizedPayPalAccount) {
-                NSLog(@"Got a nonce: %@", tokenizedPayPalAccount.nonce);
+                // NSLog(@"Got a nonce: %@", tokenizedPayPalAccount.nonce);
+                NSLog(@"[BrainTreePlugin] Payment authorized");
                 // Payment Authorized
                 if (dropInUIcallbackId) {
+                    NSLog(@"[BrainTreePlugin] Returning success result");
                     NSDictionary *dictionary = [self getPaymentUINonceResult:tokenizedPayPalAccount];
                     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
                     
@@ -96,7 +105,9 @@
                 }
             } else if (error) {
                 // Handle error here...
+                NSLog(@"[BrainTreePlugin] Paymenet error");
                 if(dropInUIcallbackId) {
+                    NSLog(@"[BrainTreePlugin] Returning error result");
                     NSString *errorMessage = [error localizedDescription];
 
                     CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errorMessage];
@@ -106,7 +117,9 @@
                 }
             } else {
                 // Buyer canceled payment approval
+                NSLog(@"[BrainTreePlugin] Payment canceled");
                 if (dropInUIcallbackId) {
+                    NSLog(@"[BrainTreePlugin] Returning cancelation result");
                     NSDictionary *dictionary = @{ @"userCancelled": @YES };
                     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                                 messageAsDictionary:dictionary];
