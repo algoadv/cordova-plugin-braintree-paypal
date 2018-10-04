@@ -18,7 +18,7 @@
             [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
             return;
         }
-    
+        
         // Obtain the arguments.
         self.token = [command.arguments objectAtIndex:0];
         
@@ -88,7 +88,7 @@
                 NSLog(@"Got a nonce: %@", tokenizedPayPalAccount.nonce);
                 // Payment Authorized
                 if (dropInUIcallbackId) {
-                    NSDictionary *dictionary = [self getPaymentUINonceResult:result.paymentMethod];
+                    NSDictionary *dictionary = [self getPaymentUINonceResult:tokenizedPayPalAccount];
                     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
                     
                     [self.commandDelegate sendPluginResult:pluginResult callbackId:dropInUIcallbackId];
@@ -124,8 +124,6 @@
     * Handles paypal nonce.
     */
     - (NSDictionary*)getPaymentUINonceResult:(BTPayPalAccountNonce *)payPalAccountNonce {
-        BTPayPalAccountNonce *payPalAccountNonce;
-
         NSDictionary *dictionary = @{ @"userCancelled": @NO,
                                     
                                     // Standard Fields
