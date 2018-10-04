@@ -105,7 +105,7 @@
                 }
             } else if (error) {
                 // Handle error here...
-                NSLog(@"[BrainTreePlugin] Paymenet error");
+                NSLog(@"[BrainTreePlugin] Payment error");
                 if(dropInUIcallbackId) {
                     NSLog(@"[BrainTreePlugin] Returning error result");
                     NSString *errorMessage = [error localizedDescription];
