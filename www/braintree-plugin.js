@@ -17,11 +17,16 @@ BrainTreePayPalPlugin.prototype.showPaymentUI = function(options, success, error
     
     if (!isNaN(options.amount * 1)) {
 	    options.amount = (options.amount * 1).toFixed(2)
-	}
+    }
+    
+    if(!options.shippingAddress) {
+        options.shippingAddress = null;
+    }
 
     var pluginOptions = [
         options.amount,
-        options.currency
+        options.currency,
+        options.shippingAddress
     ];
     
     exec(success, error, 'BrainTreePayPalPlugin', 'showPaymentUI', pluginOptions);

@@ -8,14 +8,12 @@ import com.braintreepayments.api.PayPal;
 import com.braintreepayments.api.exceptions.InvalidArgumentException;
 import com.braintreepayments.api.interfaces.BraintreeCancelListener;
 import com.braintreepayments.api.interfaces.BraintreeErrorListener;
-import com.braintreepayments.api.interfaces.PayPalApprovalCallback;
-import com.braintreepayments.api.interfaces.PayPalApprovalHandler;
 import com.braintreepayments.api.interfaces.PaymentMethodNonceCreatedListener;
 
 import com.braintreepayments.api.models.PayPalAccountNonce;
 import com.braintreepayments.api.models.PayPalRequest;
 import com.braintreepayments.api.models.PaymentMethodNonce;
-import com.paypal.android.sdk.onetouch.core.Request;
+import com.braintreepayments.api.models.PostalAddress;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -61,15 +59,23 @@ public class BrainTreePayPalPlugin extends CordovaPlugin  implements BraintreeEr
                 callbackContext.error("currency is required.");
                 return true;
             }
+            
+            this.callbackContext = callbackContext;
+
+            JSONObject shippingAddress = args.getJSONObject(2);
 
             PayPalRequest request =  new PayPalRequest(amount)
                     .currencyCode(currency)
                     .intent(PayPalRequest.INTENT_AUTHORIZE);
-            
-            this.callbackContext = callbackContext;
+
+            if(shippingAddress != null) {
+                PostalAddress postalAddress = this.getPostalAddress(shippingAddress);
+                request.shippingAddressOverride(postalAddress);
+            }
+
             this.cordova.setActivityResultCallback(this);
             PayPal.requestOneTimePayment(mBraintreeFragment, request);
-            
+
             return true;
         }
 
@@ -166,6 +172,24 @@ public class BrainTreePayPalPlugin extends CordovaPlugin  implements BraintreeEr
         }
 
         return resultMap;
+    }
+
+    private PostalAddress getPostalAddress(JSONObject addressObject) throws  JSONException {
+        PostalAddress postalAddress =  new PostalAddress();
+
+        postalAddress.recipientName( this.getAddressValue(addressObject, "recipientName"));
+        postalAddress.streetAddress( this.getAddressValue(addressObject, "streetAddress"));
+        postalAddress.extendedAddress( this.getAddressValue(addressObject, "extendedAddress"));
+        postalAddress.postalCode( this.getAddressValue(addressObject, "postalCode"));
+        postalAddress.region( this.getAddressValue(addressObject, "region"));
+        postalAddress.locality( this.getAddressValue(addressObject, "locality"));
+        postalAddress.countryCodeAlpha2( this.getAddressValue(addressObject, "countryCodeAlpha2"));
+
+        return postalAddress;
+    }
+
+    private String getAddressValue(JSONObject addressObject, String fieldName) throws  JSONException {
+        return addressObject.has(fieldName) ? addressObject.getString(fieldName) : "";
     }
 
 }
