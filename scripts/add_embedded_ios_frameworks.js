@@ -109,15 +109,16 @@ module.exports = function (context) {
   var infoPlist = plist.parse(fs.readFileSync(projectName + '-Info.plist', 'utf8'));
 
   var found = false;
-  var itemIndex = 0;
+  var plistItem = null;
+
   if (infoPlist.CFBundleURLTypes) {
     infoPlist.CFBundleURLTypes.forEach(function (curValue) {
       if (curValue.CFBundleURLSchemes) {
         curValue.CFBundleURLSchemes.forEach(function (curValue2) {
           if (curValue2 == '${PRODUCT_BUNDLE_IDENTIFIER}.payments') {
             found = true;
+            plistItem = curValue;
           }
-          itemIndex++;
         });
       }
     });
@@ -133,8 +134,11 @@ module.exports = function (context) {
     fs.writeFileSync(projectName + '-Info.plist', plist.build(infoPlist), { encoding : 'utf8' });
   }
   else if(bundleId) {
-    infoPlist.CFBundleURLTypes[itemIndex] = urlSchemeValue;
-    fs.writeFileSync(projectName + '-Info.plist', plist.build(infoPlist), { encoding : 'utf8' });
+    var itemIndex = infoPlist.CFBundleURLTypes.indexOf(plistItem);
+    if(itemIndex > -1) {
+      infoPlist.CFBundleURLTypes[itemIndex] = urlSchemeValue;
+      fs.writeFileSync(projectName + '-Info.plist', plist.build(infoPlist), { encoding : 'utf8' });
+    }
   }
 
   process.chdir('../../../');
