@@ -81,10 +81,10 @@
 
         // Save off the Cordova callback ID so it can be used in the completion handlers.
         dropInUIcallbackId = command.callbackId;
-
+       
         BTPayPalDriver *payPalDriver = [[BTPayPalDriver alloc] initWithAPIClient:self.braintreeClient];
-        payPalDriver.viewControllerPresentingDelegate = self;
-        payPalDriver.appSwitchDelegate = self; // Optional
+        payPalDriver.viewControllerPresentingDelegate = self.viewController;
+        payPalDriver.appSwitchDelegate = self.viewController; // Optional
 
         // Specify the transaction amount here.
         BTPayPalRequest *request= [[BTPayPalRequest alloc] initWithAmount:amount];
