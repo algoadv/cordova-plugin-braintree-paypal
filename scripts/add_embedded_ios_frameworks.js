@@ -133,14 +133,14 @@ module.exports = function (context) {
     infoPlist.CFBundleURLTypes.push( { 'CFBundleTypeRole':'Editor','CFBundleURLSchemes':[urlSchemeValue] } );
     fs.writeFileSync(projectName + '-Info.plist', plist.build(infoPlist), { encoding : 'utf8' });
   }
-  else if(bundleId) {
-    var itemIndex = infoPlist.CFBundleURLTypes.indexOf(plistItem);
-    if(itemIndex > -1) {
-      infoPlist.CFBundleURLTypes[itemIndex] = urlSchemeValue;
+  else if(bundleId && plistItem) {
+    var itemIdex = plistItem.CFBundleURLSchemes.indexOf("${PRODUCT_BUNDLE_IDENTIFIER}.payments");
+    if(itemIdex > -1) {
+      plistItem.CFBundleURLSchemes[itemIdex] = urlSchemeValue;
       fs.writeFileSync(projectName + '-Info.plist', plist.build(infoPlist), { encoding : 'utf8' });
     }
   }
-
+  
   process.chdir('../../../');
 };
 
