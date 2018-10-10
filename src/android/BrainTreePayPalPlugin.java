@@ -62,16 +62,16 @@ public class BrainTreePayPalPlugin extends CordovaPlugin  implements BraintreeEr
             
             this.callbackContext = callbackContext;
 
-            JSONObject shippingAddress = args.getJSONObject(2);
+            // JSONObject shippingAddress = args.getJSONObject(2);
 
             PayPalRequest request =  new PayPalRequest(amount)
                     .currencyCode(currency)
                     .intent(PayPalRequest.INTENT_AUTHORIZE);
 
-            if(shippingAddress != null) {
-                PostalAddress postalAddress = this.getPostalAddress(shippingAddress);
-                request.shippingAddressOverride(postalAddress);
-            }
+            // if(shippingAddress != null) {
+            //     PostalAddress postalAddress = this.getPostalAddress(shippingAddress);
+            //     request.shippingAddressOverride(postalAddress);
+            // }
 
             this.cordova.setActivityResultCallback(this);
             PayPal.requestOneTimePayment(mBraintreeFragment, request);
